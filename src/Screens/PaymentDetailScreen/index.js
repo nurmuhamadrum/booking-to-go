@@ -1,5 +1,5 @@
 //import liraries
-import React, { Component, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,17 +7,21 @@ import {
   SafeAreaView,
   Image,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  ActivityIndicator
 } from 'react-native';
 // Assets
 import UserIcons from '../../../assets/user.png';
 import ArrowBack from '../../../assets/arrow.png';
 // Styles
 import { styles } from './style.js'
+// Services
+import { getDataDetail } from '../../Services'
 
 
 const PaymentDetailScreen = ({ navigation }) => {
-  const [isActive, setIsActive] = useState(false)
+  const [isActive, setIsActive] = useState(false);
+  const [dataDetail, setDataDetail] = useState(false);
 
   const handleSwitch = (params) => {
     if (params) {
@@ -25,6 +29,18 @@ const PaymentDetailScreen = ({ navigation }) => {
     } else {
       setIsActive(false)
     }
+  }
+
+  useEffect(() => {
+    getData();
+  });
+
+  getData = async () => {
+    const data = await getDataDetail();
+    const dataParse = JSON.parse(data);
+    const dataDetail = dataParse?.data?.get_chosen_hotel;
+
+    setDataDetail(dataDetail);
   }
 
   return (
@@ -55,21 +71,41 @@ const PaymentDetailScreen = ({ navigation }) => {
 
           {/* card content section */}
           <View style={styles.cardContainer}>
-            <Image source={{ uri: 'https://pix10.agoda.net/hotelImages/124/1246280/1246280_16061017110043391702.jpg?ca=6&ce=1&s=1024x768' }} style={styles.imageCard} />
-            <View style={styles.titleCardContainer}>
-              <Text style={styles.titleCard}>Novotel Tangerang</Text>
-              <Text style={styles.subtitleCard}>Executive Suit Room with Breakfast 1 Kamar + Quadrule + 2 Tamu + 10 Malam</Text>
-            </View>
+            {dataDetail && <Image source={{ uri: dataDetail?.chosen_hotel_detail?.images?.[0]?.thumbnail }} style={styles.imageCard} />}
+            {dataDetail ? (
+              <View style={styles.titleCardContainer}>
+                <Text style={styles.titleCard}>{dataDetail?.chosen_hotel_detail?.hotel_name}</Text>
+                <Text style={styles.subtitleCard}>
+                  {
+                    dataDetail?.chosen_hotel_room?.room_name + ' - ' +
+                    dataDetail?.chosen_hotel_room?.meal + ' - ' +
+                    dataDetail?.chosen_hotel_params?.total_room + ' Kamar ' +
+                    dataDetail?.chosen_hotel_params?.guest_adult + ' Tamu ' +
+                    dataDetail?.chosen_hotel_params?.total_room + ' Malam. '
+                  }
+                </Text>
+              </View>
+            ) : (
+              <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: 70 }}>
+                <ActivityIndicator size="small" color="#0000ff" />
+              </View>
+            )}
           </View>
 
           {/* check-in check-out date section */}
           <View style={styles.titleCheckContainer}>
             <Text style={styles.titleDetail}>Check-In</Text>
-            <Text style={styles.subtitleCard}>30 November 2020</Text>
+            {dataDetail
+              ? <Text style={styles.subtitleCard}>{dataDetail?.chosen_hotel_params?.check_in}</Text>
+              : <ActivityIndicator size="small" color="#0000ff" />
+            }
           </View>
           <View style={styles.titleCheckContainer}>
             <Text style={styles.titleDetail}>Check-Out</Text>
-            <Text style={styles.subtitleCard}>14 Desember 2020</Text>
+            {dataDetail
+              ? <Text style={styles.subtitleCard}>{dataDetail?.chosen_hotel_params?.check_out}</Text>
+              : <ActivityIndicator size="small" color="#0000ff" />
+            }
           </View>
           <View style={styles.titleRefundContainer}>
             <Text style={styles.titleRefund}>Rp - Dapat direfund jika dibatalkan</Text>
@@ -86,7 +122,7 @@ const PaymentDetailScreen = ({ navigation }) => {
                 <Text style={styles.titleEdit}>Edit</Text>
               </TouchableOpacity>
             </View>
-            <Text style={styles.subtitleCard}>+628 7710 366 009</Text>
+            <Text style={styles.subtitleCard}>+62-877-1036-6009</Text>
           </View>
 
           {/* radio button order section */}
