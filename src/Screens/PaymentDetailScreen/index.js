@@ -1,5 +1,6 @@
 //import liraries
 import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from "react-redux";
 import {
   View,
   Text,
@@ -22,6 +23,7 @@ import { getDataDetail } from '../../Services'
 const PaymentDetailScreen = ({ navigation }) => {
   const [isActive, setIsActive] = useState(false);
   const [dataDetail, setDataDetail] = useState(false);
+  const orders = useSelector(state => state.orderReducer.orders);
 
   const handleSwitch = (params) => {
     if (params) {
@@ -33,7 +35,7 @@ const PaymentDetailScreen = ({ navigation }) => {
 
   useEffect(() => {
     getData();
-  });
+  }, []);
 
   getData = async () => {
     const data = await getDataDetail();
@@ -143,18 +145,16 @@ const PaymentDetailScreen = ({ navigation }) => {
 
           {/* guest data order section */}
           <Text style={styles.titleDetail}>Data Tamu</Text>
-          <View style={styles.cardContainerUser}>
-            <Image source={UserIcons} style={styles.iconUser} />
-            <Text>Tn. John Doe</Text>
-          </View>
-          <View style={styles.cardContainerUser}>
-            <Image source={UserIcons} style={styles.iconUser} />
-            <Text>Tn. Doel</Text>
-          </View>
-          <View style={styles.cardContainerUser}>
-            <Image source={UserIcons} style={styles.iconUser} />
-            <Text>Tn. Johny Doe Doe</Text>
-          </View>
+          {orders.length && orders.map((element) => {
+            return (
+              <View style={styles.cardContainerUser}>
+                <Image source={UserIcons} style={styles.iconUser} />
+                <Text>{element.name}</Text>
+              </View>
+            )
+          })}
+
+          {/* button navigate add data section */}
           <View style={styles.editGuestDataContainer}>
             <TouchableOpacity onPress={() => navigation.navigate('AddDataScreen')}>
               <Text style={styles.titleEdit}>Ubah Data Tamu</Text>

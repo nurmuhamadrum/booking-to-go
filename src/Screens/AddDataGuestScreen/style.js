@@ -43,7 +43,7 @@ export const styles = StyleSheet.create({
   },
   input: {
     height: 54,
-    width: '70%',
+    width: '60%',
     borderWidth: 1,
     padding: 10,
     borderColor: borderGreyColor,
@@ -60,7 +60,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: 54,
-    width: 50,
+    width: 100,
     borderWidth: 1,
     padding: 10,
     borderColor: borderGreyColor,
@@ -113,5 +113,9 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     left: 0
+  },
+  picker: {
+    height: 50, 
+    width: 110
   }
 });

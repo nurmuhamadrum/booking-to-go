@@ -1,5 +1,5 @@
 //import liraries
-import React, { Component, useState } from 'react';
+import React, { Component, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -8,16 +8,53 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
-  ScrollView
+  ScrollView,
 } from 'react-native';
+import { useSelector, useDispatch } from "react-redux";
+import { Picker } from '@react-native-picker/picker'
 // Assets
 import ArrowBack from '../../../assets/arrow.png';
 import TrashIcon from '../../../assets/trash-can.png';
 // Styles
 import { styles } from './style.js';
+// Actions
+import { addOrder, delOrder } from '../../Actions/orderActions'
 
 
 const AddDataScreen = ({ navigation }) => {
+  const orders = useSelector(state => state.orderReducer.orders);
+  const dispatch = useDispatch();
+  const [dataOrder, setDataOrder] = useState([...orders]);
+
+  _handleAddData = () => {
+    const newArr = [...dataOrder];
+    newArr.push({ 'gender': 'Mr', 'name': '' });
+    setDataOrder(newArr);
+  }
+
+  _handleDeleteOrder = (id) => {
+    const newArr = [...dataOrder];
+    newArr.splice(id, 1);
+    setDataOrder(newArr);
+  };
+
+  _handleSaveData = () => {
+    dispatch(addOrder(dataOrder));
+    navigation.navigate('PaymentDetailScreen');
+  }
+
+  _handleOnChangeInput = (id, text) => {
+    let newArr = [...dataOrder];
+    newArr[id].name = text;
+    setDataOrder(newArr);
+  }
+
+  _handleChangeGender = (value, id) => {
+    let newArr = [...dataOrder];
+    newArr[id].gender = value == 'Mr' ? 'Ms' : 'Mr';
+    setDataOrder(newArr);
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar />
@@ -37,21 +74,34 @@ const AddDataScreen = ({ navigation }) => {
           <Text style={styles.titleDataGuest}>Data Tamu</Text>
 
           {/* guest name input section */}
-          <View style={styles.contentEditContainer}>
-            <View style={styles.genderContainer}>
-              <Text style={styles.titleGender}>Mr</Text>
-            </View>
-            <TextInput
-              style={styles.input}
-              placeholder="Nama Tamu"
-            />
-            <TouchableOpacity>
-              <Image source={TrashIcon} style={styles.iconTrash} />
-            </TouchableOpacity>
-          </View>
+          {dataOrder.map((element, key) => {
+            return (
+              <View key={key} style={styles.contentEditContainer}>
+                <View style={styles.genderContainer}>
+                  <Picker
+                    selectedValue={element.gender}
+                    style={styles.picker}
+                    onValueChange={() => _handleChangeGender(element.gender, key)}
+                  >
+                    <Picker.Item label="Mr" value="Mr" />
+                    <Picker.Item label="Ms" value="Ms" />
+                  </Picker>
+                </View>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Input Nama Tamu"
+                  value={element.name}
+                  onChangeText={(text) => _handleOnChangeInput(key, text)}
+                />
+                <TouchableOpacity onPress={() => _handleDeleteOrder(key)}>
+                  <Image source={TrashIcon} style={styles.iconTrash} />
+                </TouchableOpacity>
+              </View>
+            )
+          })}
 
           {/* button add data guest section */}
-          <TouchableOpacity style={styles.addDataContainer}>
+          <TouchableOpacity style={styles.addDataContainer} onPress={() => _handleAddData()}>
             <Text style={styles.titleAddData}>+ Tambah Data Tamu</Text>
           </TouchableOpacity>
         </View>
@@ -59,7 +109,7 @@ const AddDataScreen = ({ navigation }) => {
       </ScrollView>
       {/* button save section */}
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.buttonSave}>
+        <TouchableOpacity style={styles.buttonSave} onPress={() => _handleSaveData()}>
           <Text style={styles.titleButton}>Simpan</Text>
         </TouchableOpacity>
       </View>
