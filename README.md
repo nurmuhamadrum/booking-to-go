@@ -1,4 +1,4 @@
-# React Native Weather App
+# BookingToGo React Native
 
 This application is a clone of the BookingToGo application where this application is built using React Native and BookingToGo Api as the API.
 
