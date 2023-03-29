@@ -45,7 +45,7 @@ For the client setup, if you are using physical device to run the app, make sure
 
 Then, install and run the application.
 
-for Expo :
+For Expo :
 
 `npx expo start`
 
@@ -63,8 +63,8 @@ Wait till the application is installed and run into your device. Now, you can ex
 
 <div style={{ display: 'flex' }}>
 
-  <img src="./docs/screenshots/screenshot-1.png" width="20%"  />
-  <img src="./docs/screenshots/screenshot-2.png" width="20%"  />
+  <img src="./docs/screenshots/screenshot-1.png" width="30%"  />
+  <img src="./docs/screenshots/screenshot-2.png" width="30%"  />
 
 </div>
 
