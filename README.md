@@ -76,4 +76,4 @@ Wait till the application is installed and run into your device. Now, you can ex
 
 ## Author
 
-**Nur Muhamad Rum** - www.nurmuhamadrum.site
+**Nur Muhamad Rum** - www.nurmuhamadrum.vercel.app
